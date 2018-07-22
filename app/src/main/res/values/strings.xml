@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Android Clipboard Sync</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="no_wifi">Cannot access Wi-Fi, this is required for the app to work</string>
+    <string name="register_process_started">Generating and sending challenge to Wi-Fi network</string>
+    <string name="register_waiting">Challenge sent, waiting for PC to respond</string>
+    <string name="copy_done">Successfully sent clipboard data to PC</string>
+</resources>
