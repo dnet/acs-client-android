@@ -77,14 +77,14 @@ class RegisterActivity : AppCompatActivity() {
                 awaitTermination(100, TimeUnit.MILLISECONDS)
             }
         }
-        runOnUiThread({
+        runOnUiThread {
             setServerPublicKey(pkPC)
             finish()
-        })
+        }
     }
 
     private fun setStatus(value: Int) {
-        runOnUiThread({ statusText.setText(value) })
+        runOnUiThread { statusText.setText(value) }
     }
 
     private fun openCryptoBox(fullBox: ByteArray, sk: ByteArray, pk: ByteArray): ByteArray? {

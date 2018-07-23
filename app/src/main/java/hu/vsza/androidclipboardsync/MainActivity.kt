@@ -73,9 +73,9 @@ class MainActivity : AppCompatActivity() {
                 send(DatagramPacket(payload, payload.size, address, CLIPBOARD_UDP_PORT))
             }
         }
-        runOnUiThread({
+        runOnUiThread {
             Toast.makeText(this, R.string.copy_done, Toast.LENGTH_LONG).show()
-        })
+        }
     }
 
     private fun cryptoBox(msg: String, pk: ByteArray, sk: ByteArray): ByteArray {
