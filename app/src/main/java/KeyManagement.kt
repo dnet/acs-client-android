@@ -26,7 +26,7 @@ fun Context.getKeys(): Pair<ByteArray, ByteArray> {
             it.write(sk)
         }
     }
-    return Pair(pk, sk)
+    return pk to sk
 }
 
 fun Context.setServerPublicKey(pk: ByteArray) {
