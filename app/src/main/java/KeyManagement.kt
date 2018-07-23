@@ -15,27 +15,27 @@ fun Context.getKeys(): Pair<ByteArray, ByteArray> {
     val sk = ByteArray(Sodium.crypto_box_secretkeybytes())
 
     try {
-        openFileInput(KEYPAIR_FILENAME).use { f ->
-            f.read(pk)
-            f.read(sk)
+        openFileInput(KEYPAIR_FILENAME).use {
+            it.read(pk)
+            it.read(sk)
         }
     } catch (e: IOException) {
         Sodium.crypto_box_keypair(pk, sk)
-        openFileOutput(KEYPAIR_FILENAME, Context.MODE_PRIVATE).use { f ->
-            f.write(pk)
-            f.write(sk)
+        openFileOutput(KEYPAIR_FILENAME, Context.MODE_PRIVATE).use {
+            it.write(pk)
+            it.write(sk)
         }
     }
     return Pair(pk, sk)
 }
 
 fun Context.setServerPublicKey(pk: ByteArray) {
-    openFileOutput(PUBKEY_FILENAME, Context.MODE_PRIVATE).use { f -> f.write(pk) }
+    openFileOutput(PUBKEY_FILENAME, Context.MODE_PRIVATE).use { it.write(pk) }
 }
 
 fun Context.getServerPublicKey(): ByteArray {
     val pk = ByteArray(Sodium.crypto_box_publickeybytes())
-    openFileInput(PUBKEY_FILENAME).use { f -> f.read(pk) }
+    openFileInput(PUBKEY_FILENAME).use { it.read(pk) }
     return pk
 }
 

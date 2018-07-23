@@ -67,8 +67,8 @@ class MainActivity : AppCompatActivity() {
         val msg = cb.primaryClip.getItemAt(0)?.coerceToText(this)?.toString() ?: return
         val payload = cryptoBox(msg, pkPC, skApp)
 
-        DatagramSocket(CLIPBOARD_UDP_PORT).use { socket ->
-            with(socket) {
+        DatagramSocket(CLIPBOARD_UDP_PORT).use {
+            with(it) {
                 broadcast = true
                 send(DatagramPacket(payload, payload.size, address, CLIPBOARD_UDP_PORT))
             }
