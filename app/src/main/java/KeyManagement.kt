@@ -44,10 +44,7 @@ fun Context.getBroadcastAddress(): InetAddress? {
     val dhcp = wifi?.dhcpInfo ?: return null
 
     val broadcast = (dhcp.ipAddress and dhcp.netmask) or dhcp.netmask.inv()
-    val quads = ByteArray(4)
-    for (k in 0..3) {
-        quads[k] = (broadcast shr(k * 8) and 0xFF).toByte()
-    }
+    val quads = ((0..3).map { (broadcast shr(it * 8) and 0xFF).toByte() }).toByteArray()
     return InetAddress.getByAddress(quads)
 }
 
