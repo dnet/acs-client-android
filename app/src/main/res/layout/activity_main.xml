@@ -11,7 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:onClick="associateWithPC"
-        android:text="Associate with PC"
+        android:text="@string/associate_with_pc"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp" />
 
@@ -20,7 +20,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:onClick="sendClipboardToPC"
-        android:text="Send clipboard to PC"
+        android:text="@string/send_clipboard_to_pc"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="73dp" />
 

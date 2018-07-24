@@ -6,4 +6,7 @@
     <string name="register_waiting">Challenge sent, waiting for PC to respond</string>
     <string name="copy_done">Successfully sent clipboard data to PC</string>
     <string name="empty_clipboard">Clipboard seems to be empty</string>
+    <string name="associate_with_pc">Associate with PC</string>
+    <string name="send_clipboard_to_pc">Send clipboard to PC</string>
+    <string name="please_wait">Please wait</string>
 </resources>

@@ -13,7 +13,7 @@
         android:id="@+id/statusText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Please wait"
+        android:text="@string/please_wait"
         tools:layout_editor_absoluteX="163dp"
         tools:layout_editor_absoluteY="245dp" />
 </LinearLayout>
