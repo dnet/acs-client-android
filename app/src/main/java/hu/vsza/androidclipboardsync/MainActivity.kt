@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         Thread(Runnable {
             val broadcast = getBroadcastAddress()
             if (broadcast == null) {
-                Toast.makeText(this, R.string.no_wifi, Toast.LENGTH_LONG).show()
+                showToastFromThread(R.string.no_wifi)
             } else {
                 sendClipboardToAddress(broadcast)
             }
@@ -73,9 +73,11 @@ class MainActivity : AppCompatActivity() {
                 send(DatagramPacket(payload, payload.size, address, CLIPBOARD_UDP_PORT))
             }
         }
-        runOnUiThread {
-            Toast.makeText(this, R.string.copy_done, Toast.LENGTH_LONG).show()
-        }
+        showToastFromThread(R.string.copy_done)
+    }
+
+    private fun showToastFromThread(content: Int) = runOnUiThread {
+        Toast.makeText(this, content, Toast.LENGTH_LONG).show()
     }
 
     private fun cryptoBox(msg: String, pk: ByteArray, sk: ByteArray): ByteArray {
