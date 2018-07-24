@@ -62,9 +62,18 @@ class MainActivity : AppCompatActivity() {
         val (pkApp, skApp) = getKeys()
         val pkPC = getServerPublicKey()
         if (!(cb.hasPrimaryClip() &&
-                        cb.primaryClipDescription.hasMimeType(MIMETYPE_TEXT_PLAIN))) return
+                        cb.primaryClipDescription.hasMimeType(MIMETYPE_TEXT_PLAIN))) {
+            showToastFromThread(R.string.empty_clipboard)
+            return
+        }
 
-        val msg = cb.primaryClip.getItemAt(0)?.coerceToText(this)?.toString() ?: return
+        val msg = cb.primaryClip.getItemAt(0)?.coerceToText(this)?.toString()
+
+        if (msg == null) {
+            showToastFromThread(R.string.empty_clipboard)
+            return
+        }
+
         val payload = cryptoBox(msg, pkPC, skApp)
 
         DatagramSocket(CLIPBOARD_UDP_PORT).use {

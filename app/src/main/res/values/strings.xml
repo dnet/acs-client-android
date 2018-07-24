@@ -5,4 +5,5 @@
     <string name="register_process_started">Generating and sending challenge to Wi-Fi network</string>
     <string name="register_waiting">Challenge sent, waiting for PC to respond</string>
     <string name="copy_done">Successfully sent clipboard data to PC</string>
+    <string name="empty_clipboard">Clipboard seems to be empty</string>
 </resources>
