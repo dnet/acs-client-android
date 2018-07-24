@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import android.util.Base64
 import org.libsodium.jni.Sodium
+import org.libsodium.jni.SodiumConstants
 import java.io.IOException
 import java.net.InetAddress
 
@@ -11,8 +12,8 @@ private const val KEYPAIR_FILENAME = "keypair"
 private const val PUBKEY_FILENAME = "pubkey"
 
 fun Context.getKeys(): Pair<ByteArray, ByteArray> {
-    val pk = ByteArray(Sodium.crypto_box_publickeybytes())
-    val sk = ByteArray(Sodium.crypto_box_secretkeybytes())
+    val pk = ByteArray(SodiumConstants.PUBLICKEY_BYTES)
+    val sk = ByteArray(SodiumConstants.SECRETKEY_BYTES)
 
     try {
         openFileInput(KEYPAIR_FILENAME).use {
@@ -34,7 +35,7 @@ fun Context.setServerPublicKey(pk: ByteArray) {
 }
 
 fun Context.getServerPublicKey(): ByteArray {
-    val pk = ByteArray(Sodium.crypto_box_publickeybytes())
+    val pk = ByteArray(SodiumConstants.PUBLICKEY_BYTES)
     openFileInput(PUBKEY_FILENAME).use { it.read(pk) }
     return pk
 }
@@ -49,7 +50,7 @@ fun Context.getBroadcastAddress(): InetAddress? {
 }
 
 fun generateNonce(): ByteArray {
-    val nl = Sodium.crypto_box_noncebytes()
+    val nl = SodiumConstants.NONCE_BYTES
     val nonce = ByteArray(nl)
     Sodium.randombytes(nonce, nl)
     return nonce

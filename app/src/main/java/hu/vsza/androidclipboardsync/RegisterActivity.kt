@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_register.*
 import kotlinx.android.synthetic.main.content_register.*
 import org.libsodium.jni.NaCl
 import org.libsodium.jni.Sodium
+import org.libsodium.jni.SodiumConstants
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
@@ -88,8 +89,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun openCryptoBox(fullBox: ByteArray, sk: ByteArray, pk: ByteArray): ByteArray? {
-        val nl = Sodium.crypto_box_noncebytes()
-        val box = fullBox.copyOfRange(nl, fullBox.size)
+        val box = fullBox.copyOfRange(SodiumConstants.NONCE_BYTES, fullBox.size)
         val plain = ByteArray(box.size - Sodium.crypto_box_macbytes())
         val result = Sodium.crypto_box_open_easy(plain, box, box.size, fullBox, pk, sk)
         return if (result == 0) plain else null
