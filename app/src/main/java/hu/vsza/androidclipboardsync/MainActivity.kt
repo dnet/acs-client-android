@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun associateWithPC(v: View) {
         IntentIntegrator(this).initiateScan()
     }
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, RegisterActivity::class.java).putExtra(REGISTER_PUBKEY, pk))
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun sendClipboardToPC(v: View) {
         Thread(Runnable {
             val broadcast = getBroadcastAddress()
@@ -59,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun sendClipboardToAddress(address: InetAddress) {
         val cb = clipboardManager ?: return
-        val (pkApp, skApp) = getKeys()
+        val (_, skApp) = getKeys()
         val pkPC = getServerPublicKey()
         if (!(cb.hasPrimaryClip() &&
                         cb.primaryClipDescription.hasMimeType(MIMETYPE_TEXT_PLAIN))) {
