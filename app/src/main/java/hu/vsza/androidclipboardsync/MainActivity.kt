@@ -33,6 +33,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+
+        if (intent.action == Intent.ACTION_SEND && intent.type == "text/plain") {
+            val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
+            if (sharedText != null) {
+                sendStringToPC(sharedText)
+            }
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")
