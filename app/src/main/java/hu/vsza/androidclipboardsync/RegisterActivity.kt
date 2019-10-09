@@ -1,11 +1,9 @@
 package hu.vsza.androidclipboardsync
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 
 import kotlinx.android.synthetic.main.activity_register.*
-import kotlinx.android.synthetic.main.content_register.*
 import org.libsodium.jni.NaCl
 import org.libsodium.jni.Sodium
 import org.libsodium.jni.SodiumConstants
@@ -25,7 +23,6 @@ class RegisterActivity : AppCompatActivity() {
         NaCl.sodium()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
-        setSupportActionBar(toolbar)
 
         Thread(Runnable(this::registerWithPC)).start()
     }

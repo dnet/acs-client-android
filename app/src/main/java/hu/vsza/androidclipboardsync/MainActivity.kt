@@ -4,10 +4,10 @@ import android.content.ClipDescription.MIMETYPE_TEXT_PLAIN
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import co.nstant.`in`.cbor.CborBuilder
 import co.nstant.`in`.cbor.CborEncoder
 import com.google.zxing.integration.android.IntentIntegrator
