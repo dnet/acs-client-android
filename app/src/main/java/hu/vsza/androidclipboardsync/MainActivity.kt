@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         val ir = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         val pk = ir.byteSegments0
         startActivity(Intent(this, RegisterActivity::class.java).putExtra(REGISTER_PUBKEY, pk))
