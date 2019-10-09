@@ -57,5 +57,5 @@ fun generateNonce(): ByteArray {
 }
 
 fun dumpBinary(prefix: String, msg: ByteArray) {
-    System.out.println("[DUMP] $prefix: ${Base64.encodeToString(msg, 0)}")
+    println("[DUMP] $prefix: ${Base64.encodeToString(msg, 0)}")
 }
