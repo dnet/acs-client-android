@@ -49,20 +49,7 @@ class MainActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun sendClipboardToPC(v: View) {
-        Thread(Runnable {
-            val broadcast = getBroadcastAddress()
-            if (broadcast == null) {
-                showToastFromThread(R.string.no_wifi)
-            } else {
-                sendClipboardToAddress(broadcast)
-            }
-        }).start()
-    }
-
-    private fun sendClipboardToAddress(address: InetAddress) {
         val cb = clipboardManager ?: return
-        val (_, skApp) = getKeys()
-        val pkPC = getServerPublicKey()
         if (!(cb.hasPrimaryClip() &&
                         cb.primaryClipDescription!!.hasMimeType(MIMETYPE_TEXT_PLAIN))) {
             showToastFromThread(R.string.empty_clipboard)
@@ -75,6 +62,24 @@ class MainActivity : AppCompatActivity() {
             showToastFromThread(R.string.empty_clipboard)
             return
         }
+
+        sendStringToPC(msg)
+    }
+
+    private fun sendStringToPC(msg: String) {
+        Thread(Runnable {
+            val broadcast = getBroadcastAddress()
+            if (broadcast == null) {
+                showToastFromThread(R.string.no_wifi)
+            } else {
+                sendClipboardToAddress(broadcast, msg)
+            }
+        }).start()
+    }
+
+    private fun sendClipboardToAddress(address: InetAddress, msg: String) {
+        val (_, skApp) = getKeys()
+        val pkPC = getServerPublicKey()
 
         val payload = cryptoBox(msg, pkPC, skApp)
 
