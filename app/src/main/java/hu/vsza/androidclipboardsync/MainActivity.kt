@@ -64,12 +64,12 @@ class MainActivity : AppCompatActivity() {
         val (_, skApp) = getKeys()
         val pkPC = getServerPublicKey()
         if (!(cb.hasPrimaryClip() &&
-                        cb.primaryClipDescription.hasMimeType(MIMETYPE_TEXT_PLAIN))) {
+                        cb.primaryClipDescription!!.hasMimeType(MIMETYPE_TEXT_PLAIN))) {
             showToastFromThread(R.string.empty_clipboard)
             return
         }
 
-        val msg = cb.primaryClip.getItemAt(0)?.coerceToText(this)?.toString()
+        val msg = cb.primaryClip?.getItemAt(0)?.coerceToText(this)?.toString()
 
         if (msg == null) {
             showToastFromThread(R.string.empty_clipboard)
