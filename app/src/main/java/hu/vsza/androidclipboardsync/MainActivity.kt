@@ -14,15 +14,12 @@ import com.google.zxing.integration.android.IntentIntegrator
 import org.libsodium.jni.NaCl
 import org.libsodium.jni.Sodium
 import java.io.ByteArrayOutputStream
-import java.math.BigInteger
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
 
 private const val TIMEOUT = 300
 private const val CLIPBOARD_UDP_PORT = 9362
-private val PUBKEY_MASK = BigInteger(
-        "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 16)
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,8 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val ir = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        val bn = (BigInteger(ir.rawBytes) shr 4) and PUBKEY_MASK
-        val pk = bn.toByteArray()
+        val pk = ir.byteSegments0
         startActivity(Intent(this, RegisterActivity::class.java).putExtra(REGISTER_PUBKEY, pk))
     }
 
