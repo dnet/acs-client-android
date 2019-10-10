@@ -4,8 +4,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
 import kotlinx.android.synthetic.main.activity_register.*
+import org.hsbp.androsphinx.Curve25519PublicKey
+import org.hsbp.androsphinx.SodiumException
+import org.hsbp.androsphinx.decrypt
+import org.hsbp.androsphinx.randomBytes
 import org.libsodium.jni.NaCl
-import org.libsodium.jni.Sodium
 import org.libsodium.jni.SodiumConstants
 import java.net.DatagramPacket
 import java.net.DatagramSocket
@@ -38,15 +41,15 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun registerUsingAddress(address: InetAddress) {
-        val pkPC = intent.getByteArrayExtra(REGISTER_PUBKEY) ?: return
+        val pkPC = Curve25519PublicKey.fromByteArray(intent.getByteArrayExtra(REGISTER_PUBKEY) ?: return)
         DatagramSocket(REG_UDP_PORT).use { socket ->
             with(socket) {
                 broadcast = true
                 soTimeout = 100
             }
-            val (pkApp, skApp) = getKeys()
-            val challenge = generateNonce()
-            val payload = sealBox(pkApp + challenge, pkPC)
+            val skApp = getPrivateKey()
+            val challenge = randomBytes(SodiumConstants.NONCE_BYTES)
+            val payload = pkPC.seal(skApp.publicKey.asBytes + challenge)
             val packet = DatagramPacket(payload, payload.size, address, REG_UDP_PORT)
 
             val task = Runnable { socket.send(packet) }
@@ -64,7 +67,11 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 val cb = buf.copyOfRange(response.offset, response.offset + response.length)
                 if (cb.contentEquals(payload)) continue
-                val plain = openCryptoBox(cb, skApp, pkPC) ?: continue
+                val plain = try {
+                    (pkPC to skApp).decrypt(cb)
+                } catch (_: SodiumException) {
+                    continue
+                }
                 if (challenge.contentEquals(plain)) break
             }
 
@@ -81,18 +88,5 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun setStatus(value: Int) {
         runOnUiThread { statusText.setText(value) }
-    }
-
-    private fun openCryptoBox(fullBox: ByteArray, sk: ByteArray, pk: ByteArray): ByteArray? {
-        val box = fullBox.copyOfRange(SodiumConstants.NONCE_BYTES, fullBox.size)
-        val plain = ByteArray(box.size - Sodium.crypto_box_macbytes())
-        val result = Sodium.crypto_box_open_easy(plain, box, box.size, fullBox, pk, sk)
-        return if (result == 0) plain else null
-    }
-
-    private fun sealBox(msg: ByteArray, pk: ByteArray): ByteArray {
-        val packet = ByteArray(msg.size + Sodium.crypto_box_sealbytes())
-        Sodium.crypto_box_seal(packet, msg, msg.size, pk)
-        return packet
     }
 }

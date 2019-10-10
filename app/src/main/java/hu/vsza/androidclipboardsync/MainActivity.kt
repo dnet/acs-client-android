@@ -11,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import co.nstant.`in`.cbor.CborBuilder
 import co.nstant.`in`.cbor.CborEncoder
 import com.google.zxing.integration.android.IntentIntegrator
+import org.hsbp.androsphinx.Curve25519PrivateKey
+import org.hsbp.androsphinx.Curve25519PublicKey
+import org.hsbp.androsphinx.encrypt
 import org.libsodium.jni.NaCl
-import org.libsodium.jni.Sodium
 import java.io.ByteArrayOutputStream
 import java.net.DatagramPacket
 import java.net.DatagramSocket
@@ -82,10 +84,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendClipboardToAddress(address: InetAddress, msg: String) {
-        val (_, skApp) = getKeys()
+        val skApp = getPrivateKey()
         val pkPC = getServerPublicKey()
 
-        val payload = cryptoBox(msg, pkPC, skApp)
+        val payload = (skApp to pkPC).encrypt(serialize(msg))
 
         DatagramSocket(CLIPBOARD_UDP_PORT).use {
             with(it) {
@@ -100,9 +102,7 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, content, Toast.LENGTH_LONG).show()
     }
 
-    private fun cryptoBox(msg: String, pk: ByteArray, sk: ByteArray): ByteArray {
-        val nonce = generateNonce()
-
+    private fun serialize(msg: String): ByteArray {
         val baos = ByteArrayOutputStream()
         CborEncoder(baos).encode(
                 CborBuilder().addArray()
@@ -111,10 +111,6 @@ class MainActivity : AppCompatActivity() {
                         .end()
                         .build()
         )
-        val payload = baos.toByteArray()
-        val ciphertext = ByteArray(payload.size + Sodium.crypto_box_macbytes())
-        Sodium.crypto_box_easy(ciphertext, payload, payload.size, nonce, pk, sk)
-
-        return nonce + ciphertext
+        return baos.toByteArray()
     }
 }

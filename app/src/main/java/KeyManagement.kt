@@ -3,41 +3,36 @@ package hu.vsza.androidclipboardsync
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.util.Base64
-import org.libsodium.jni.Sodium
-import org.libsodium.jni.SodiumConstants
+import org.hsbp.androsphinx.Curve25519PrivateKey
+import org.hsbp.androsphinx.Curve25519PublicKey
 import java.io.IOException
 import java.net.InetAddress
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
-private const val KEYPAIR_FILENAME = "keypair"
+private const val PRIVKEY_FILENAME = "privkey"
 private const val PUBKEY_FILENAME = "pubkey"
 
-fun Context.getKeys(): Pair<ByteArray, ByteArray> {
-    val pk = ByteArray(SodiumConstants.PUBLICKEY_BYTES)
-    val sk = ByteArray(SodiumConstants.SECRETKEY_BYTES)
-
+fun Context.getPrivateKey(): Curve25519PrivateKey {
     try {
-        openFileInput(KEYPAIR_FILENAME).use {
-            it.read(pk)
-            it.read(sk)
+        openFileInput(PRIVKEY_FILENAME).use {
+            return Curve25519PrivateKey.fromByteArray(it.readBytes())
         }
     } catch (e: IOException) {
-        Sodium.crypto_box_keypair(pk, sk)
-        openFileOutput(KEYPAIR_FILENAME, Context.MODE_PRIVATE).use {
-            it.write(pk)
-            it.write(sk)
+        val sk = Curve25519PrivateKey.generate()
+        openFileOutput(PRIVKEY_FILENAME, Context.MODE_PRIVATE).use {
+            it.write(sk.asBytes)
         }
+        return sk
     }
-    return pk to sk
 }
 
-fun Context.setServerPublicKey(pk: ByteArray) {
-    openFileOutput(PUBKEY_FILENAME, Context.MODE_PRIVATE).use { it.write(pk) }
+fun Context.setServerPublicKey(pk: Curve25519PublicKey) {
+    openFileOutput(PUBKEY_FILENAME, Context.MODE_PRIVATE).use { it.write(pk.asBytes) }
 }
 
-fun Context.getServerPublicKey(): ByteArray {
-    val pk = ByteArray(SodiumConstants.PUBLICKEY_BYTES)
-    openFileInput(PUBKEY_FILENAME).use { it.read(pk) }
-    return pk
+fun Context.getServerPublicKey(): Curve25519PublicKey {
+    return Curve25519PublicKey.fromByteArray(openFileInput(PUBKEY_FILENAME).use { it.readBytes() })
 }
 
 fun Context.getBroadcastAddress(): InetAddress? {
@@ -47,13 +42,6 @@ fun Context.getBroadcastAddress(): InetAddress? {
     val broadcast = (dhcp.ipAddress and dhcp.netmask) or dhcp.netmask.inv()
     val quads = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(broadcast).array()
     return InetAddress.getByAddress(quads)
-}
-
-fun generateNonce(): ByteArray {
-    val nl = SodiumConstants.NONCE_BYTES
-    val nonce = ByteArray(nl)
-    Sodium.randombytes(nonce, nl)
-    return nonce
 }
 
 fun dumpBinary(prefix: String, msg: ByteArray) {
